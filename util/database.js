@@ -1,6 +1,6 @@
 const { Client } = require('pg')
 
-const config = require('../conf/config.json');
+const config = require('../conf.json');
 
 const client = new Client({
   user: config.user,
