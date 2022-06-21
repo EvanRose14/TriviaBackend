@@ -4,6 +4,9 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 
+const WebTokens = require('../util/webtokens');
+
+
 exports.signup = async (req, res, next) => {
     const errors = validationResult(req);
     
@@ -31,10 +34,11 @@ exports.signup = async (req, res, next) => {
         if (!err.statusCode) {
             err.statusCode = 500;
         }
-        console.log(err);
+        console.error(err);
         next(err);
     }
 }
+
 
 exports.login = async (req, res, next) => {
     const {email, password} = req.body;
@@ -52,13 +56,17 @@ exports.login = async (req, res, next) => {
             return res.status(401).json({ message: 'Incorrect password.' });
         }
 
-        res.status(200).json({ message: 'Login successful' }) ;
+        const tokens = WebTokens.jwtTokens(user.rows[0]);
+
+        res.cookie('refresh_token', tokens.refreshToken, {httpOnly: true});
+
+        res.json(tokens);
     }
     catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
         }
-        console.log(err);
+        console.error(err);
         next(err);
     }
 }

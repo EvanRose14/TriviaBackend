@@ -6,6 +6,20 @@ module.exports = class User {
         this.email = email
         this.password = password
     }
+    
+
+    static getAllUsers() {
+        const query = "SELECT * FROM trivia.users"
+
+        return db.query(query)
+        .then(res => {
+            return res;
+        }).catch(e => {
+            console.error(`Error getting all users: ${e}`);
+            throw new Error(e.message);
+        })
+    }
+
 
     static find(email) {
         const query = "SELECT * FROM trivia.users WHERE email=$1"
@@ -20,6 +34,7 @@ module.exports = class User {
             throw new Error(e.message);
         });
     }
+
 
     static save(user) {
         const query = "INSERT INTO trivia.users (name, email, password) VALUES ($1, $2, $3)"

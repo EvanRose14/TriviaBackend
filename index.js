@@ -1,8 +1,12 @@
 const express = require('express');
 
+require("dotenv").config();
+
 const bodyParser = require('body-parser');
 
 const authRoutes = require('./routes/auth');
+
+const usersRoutes = require('./routes/users');
 
 const errorController = require('./controllers/error')
 
@@ -20,6 +24,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/auth', authRoutes);
+
+app.use('/users', usersRoutes);
 
 app.use(errorController.get404);
 
