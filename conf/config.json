@@ -1,7 +1,0 @@
-{
-    "host": "gorilladb-dev.cbushy6r6lq5.us-east-1.rds.amazonaws.com",
-    "user": "postgres",
-    "database": "postgres",
-    "password": "GorillaDev$4",
-    "port": 5432
-}
