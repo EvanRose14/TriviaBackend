@@ -25,10 +25,19 @@ router.post('/signup',
 );
 
 router.post('/login', 
-    [
-
-    ],
+    [],
     authController.login
+);
+
+
+router.get('/refresh_token',
+    [],
+    authController.refresh_token
+);
+
+router.delete('/refresh_token',
+    [],
+    authController.delete_token
 );
 
 module.exports = router;

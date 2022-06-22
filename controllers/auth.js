@@ -4,7 +4,9 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 
-const WebTokens = require('../util/webtokens');
+const { jwtTokens } = require('../util/webtokens');
+
+const { verify } = require('jsonwebtoken');
 
 
 exports.signup = async (req, res, next) => {
@@ -56,7 +58,7 @@ exports.login = async (req, res, next) => {
             return res.status(401).json({ message: 'Incorrect password.' });
         }
 
-        const tokens = WebTokens.jwtTokens(user.rows[0]);
+        const tokens = jwtTokens(user.rows[0]);
 
         res.cookie('refresh_token', tokens.refreshToken, {httpOnly: true});
 
@@ -68,5 +70,44 @@ exports.login = async (req, res, next) => {
         }
         console.error(err);
         next(err);
+    }
+}
+
+
+exports.refresh_token = async (req, res, next) => {
+    try {
+        const refreshToken = req.cookies.refresh_token;
+        
+        if(refreshToken === null) return res.status(401).json({ error: 'Null refresh token.'});
+
+        verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, user) => {
+
+            if(error) return res.status(403).json({ error: error.message});
+
+            let tokens = jwtTokens(user);
+
+            res.cookie('refresh_token', tokens.refreshToken, {httpOnly: true});
+            res.json(tokens);
+        });
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        console.error(err);
+        next(err);
+    }
+}
+
+exports.delete_token = async (req, res, next) => {
+    try {
+        res.clearCookie('refresh_token');
+        return res.status(200).json({message: 'Refresh token deleted.'});
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        console.error(err);
+        next(err); 
     }
 }

@@ -1,5 +1,7 @@
 const express = require('express');
 
+var cookies = require("cookie-parser");
+
 require("dotenv").config();
 
 const bodyParser = require('body-parser');
@@ -11,6 +13,8 @@ const usersRoutes = require('./routes/users');
 const errorController = require('./controllers/error')
 
 const app = express();
+
+app.use(cookies());
 
 const port = process.env.PORT || 3000;
 
