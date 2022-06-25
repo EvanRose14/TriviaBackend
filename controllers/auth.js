@@ -49,13 +49,13 @@ exports.login = async (req, res, next) => {
         const user = await User.find(email);
 
         if(user.rowCount === 0) {
-            return res.status(401).json({ message: 'Email not found.' });
+            return res.status(401).json({ error: 'Email not found' });
         }
 
         const passwordMatched = await bcrypt.compare(password, user.rows[0].password);
 
         if(!passwordMatched) {
-            return res.status(401).json({ message: 'Incorrect password.' });
+            return res.status(401).json({ error: 'Incorrect password' });
         }
 
         const tokens = jwtTokens(user.rows[0]);
@@ -78,7 +78,7 @@ exports.refresh_token = async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refresh_token;
         
-        if(refreshToken === null) return res.status(401).json({ error: 'Null refresh token.'});
+        if(refreshToken === null) return res.status(401).json({ error: 'Null refresh token'});
 
         verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, user) => {
 
@@ -102,7 +102,7 @@ exports.refresh_token = async (req, res, next) => {
 exports.delete_token = async (req, res, next) => {
     try {
         res.clearCookie('refresh_token');
-        return res.status(200).json({message: 'Refresh token deleted.'});
+        return res.status(200).json({message: 'Refresh token deleted'});
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
