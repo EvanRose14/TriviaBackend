@@ -7,10 +7,10 @@ module.exports = class Auth {
 
         const token = authHeader && authHeader.split(' ')[1];
 
-        if(token === null) return res.status(401).json({ error: 'NULL token' });
+        if(token === null) return res.status(401).json({ message: 'NULL token' });
 
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
-            if(error) return res.status(403).json({ error: error.message });
+            if(error) return res.status(403).json({ message: error.message });
             req.user = user;
             next();
         })

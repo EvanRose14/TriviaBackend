@@ -21,7 +21,7 @@ module.exports = class User {
     }
 
 
-    static find(email) {
+    static findByEmail(email) {
         const query = "SELECT * FROM trivia.users WHERE email=$1"
         const values = [email]
 
@@ -30,7 +30,22 @@ module.exports = class User {
             return res;
         })
         .catch(e => {
-            console.error(`Error finding email: ${e}`)
+            console.error(`Error finding user by email: ${e}`)
+            throw new Error(e.message);
+        });
+    }
+
+
+    static findByUsername(username) {
+        const query = "SELECT * FROM trivia.users WHERE name=$1"
+        const values = [username]
+
+        return db.query(query, values)
+        .then(res => {
+            return res;
+        })
+        .catch(e => {
+            console.error(`Error finding user by username: ${e}`)
             throw new Error(e.message);
         });
     }

@@ -10,12 +10,17 @@ const authController = require('../controllers/auth');
 
 router.post('/signup',
     [
-        body('name').trim().not().isEmpty().withMessage('Username required'),
-        body('email').isEmail().withMessage('Must be a valid email')
-        .custom(async (email) => {
-            const user = await User.find(email)
+        body('name').trim().not().isEmpty().withMessage('Username required').custom(async (username) => {
+            const user = await User.findByUsername(username)
             if(user.rowCount > 0) {
-                return Promise.reject('Email address is already being used')
+                return Promise.reject('Username taken')
+            }
+        }),
+        body('email').isEmail().withMessage('Invalid email')
+        .custom(async (email) => {
+            const user = await User.findByEmail(email)
+            if(user.rowCount > 0) {
+                return Promise.reject('Email taken')
             }
         })
         .normalizeEmail(),

@@ -13,8 +13,8 @@ exports.signup = async (req, res, next) => {
     const errors = validationResult(req);
     
     if(!errors.isEmpty()) {
-        next(new Error(errors.errors[0].msg));
-        return
+        // next(new Error(errors.errors[0].msg));
+        return res.status(401).json({message: errors.errors[0].msg})
     }
     
     const {name, email, password} = req.body;
@@ -46,16 +46,16 @@ exports.login = async (req, res, next) => {
     const {email, password} = req.body;
 
     try {
-        const user = await User.find(email);
+        const user = await User.findByEmail(email);
 
         if(user.rowCount === 0) {
-            return res.status(401).json({ error: 'Email not found' });
+            return res.status(401).json({ message: 'Email not found' });
         }
 
         const passwordMatched = await bcrypt.compare(password, user.rows[0].password);
 
         if(!passwordMatched) {
-            return res.status(401).json({ error: 'Incorrect password' });
+            return res.status(401).json({ message: 'Incorrect password' });
         }
 
         const tokens = jwtTokens(user.rows[0]);
@@ -78,11 +78,11 @@ exports.refresh_token = async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refresh_token;
         
-        if(refreshToken === null) return res.status(401).json({ error: 'Null refresh token'});
+        if(refreshToken === null) return res.status(401).json({ message: 'Null refresh token'});
 
         verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, user) => {
 
-            if(error) return res.status(403).json({ error: error.message});
+            if(error) return res.status(403).json({ message: error.message});
 
             let tokens = jwtTokens(user);
 
