@@ -7,10 +7,10 @@ require("dotenv").config();
 const bodyParser = require('body-parser');
 
 const authRoutes = require('./routes/auth');
-
 const usersRoutes = require('./routes/users');
+const triviaRoutes = require('./routes/trivia');
 
-const errorController = require('./controllers/error')
+const errorController = require('./controllers/error');
 
 const app = express();
 
@@ -28,11 +28,10 @@ app.use((req, res, next) => {
 });
 
 app.use('/auth', authRoutes);
-
 app.use('/users', usersRoutes);
+app.use('/trivia', triviaRoutes);
 
 app.use(errorController.get404);
-
 app.use(errorController.get500);
 
 app.listen(port, () => console.log(`listening on port ${port}`));
