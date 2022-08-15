@@ -8,7 +8,7 @@ module.exports = class OpenTDB {
     constructor() {}
     static async getQuestion() {
         const {data} = await axios.get(api_url, {
-            params: {amount: 10}
+            params: {amount: 1}
         }).catch(e => {
             console.error(`Error getting all users: ${e}`);
             throw new Error(e.message);
